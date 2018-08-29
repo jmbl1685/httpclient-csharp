@@ -8,4 +8,5 @@ jobs:
       - run: find .
       - run: dotnet restore
       - run: dotnet build ./NetCore.sln
-      - run: dotnet test NetCore.sln
+      - run: cd NetCore.Test
+      - run: dotnet test
