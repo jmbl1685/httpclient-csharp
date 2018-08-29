@@ -1,0 +1,11 @@
+matrix:
+  include:
+    - language: csharp
+      solution: ./server/SignalR.sln
+      dotnet: 2.1.302
+      mono: none
+      script:
+      - dotnet restore
+      - dotnet build
+      - cd NetCore.Test
+      - dotnet test
