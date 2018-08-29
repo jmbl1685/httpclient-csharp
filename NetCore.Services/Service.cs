@@ -12,6 +12,8 @@ namespace NetCore.Services
     {
         private readonly HttpClient client;
 
+        #region Constructor
+
         public Service(string url)
         {
             client = new HttpClient();
@@ -19,22 +21,22 @@ namespace NetCore.Services
                 name: ServiceResource.UserAgent, value: ServiceResource.UserAgentType);
             client.BaseAddress = new Uri(url);
         }
+        #endregion
 
-        public async Task<object> Post(Car data) => await ServiceCall(method: "POST", body: data);
+        public async Task<object> Post<T>(T data) => await ServiceCall(method: "POST", body: data, id: "Hello");
 
-        public async Task<object> Put(string id, Car data) => await ServiceCall(method: "PUT", body: data, id: id);
+        public async Task<object> Put<T>(string id, T data) => await ServiceCall(method: "PUT", body: data, id: id);
 
-        public async Task<object> Get(string id = null) => await ServiceCall(method: "GET", id: id);
+        public async Task<object> Get(string id = null) => await ServiceCall(method: "GET", body: false, id: id);
 
-        public async Task<object> Delete(string id) => await ServiceCall(method: "DELETE", id: id);
+        public async Task<object> Delete(string id) => await ServiceCall(method: "DELETE", body: false, id: id);
 
         #region ServiceCall 
-        public async Task<object> ServiceCall(string method, Car body = null, string id = null)
+        public async Task<object> ServiceCall<T>(string method, T body, string id = null)
         {
 
             HttpResponseMessage response = null;
             string content = null;
-            var car = JsonConvert.SerializeObject(body);
 
             try
             {
@@ -43,7 +45,7 @@ namespace NetCore.Services
                     case "POST":
                         {
                             response = await client.PostAsync(client.BaseAddress, GetStringContent(body));
-                            content = await response.Content.ReadAsStringAsync();
+                            content = await response.Content.ReadAsStringAsync();                          
                             break;
                         }
                     case "GET":
@@ -80,7 +82,7 @@ namespace NetCore.Services
         #endregion
 
         #region GetStringContent
-        public StringContent GetStringContent(Car body)
+        public StringContent GetStringContent<T>(T body)
         {
             return new StringContent(
                 content: JsonConvert.SerializeObject(body),
